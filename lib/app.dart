@@ -47,7 +47,7 @@ class _LocalInitState extends State<LocalInit> {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      child: Text("Brucards"),
+      child: Text("Brucards",style: TextStyle(color: Colors.blue),),
       onPressed: () async {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => SeleccionarJuego()));
@@ -65,7 +65,10 @@ class _SeleccionarJuegoState extends State<SeleccionarJuego> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Seleccionar Juego"),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -73,7 +76,7 @@ class _SeleccionarJuegoState extends State<SeleccionarJuego> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             MaterialButton(
-                child: Text("Iniciar reloj"),
+                child: Text("Iniciar reloj",style:TextStyle(color: Colors.blue)),
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => RelojInicio()));

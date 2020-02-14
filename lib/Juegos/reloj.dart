@@ -1,11 +1,12 @@
-import 'package:brucards/Juegos/tablero.dart';
-import 'package:brucards/LocalDB/carta.dart';
-import 'package:brucards/LocalDB/mano.dart';
-import 'package:brucards/LocalDB/maso.dart';
-import 'package:brucards/LocalDB/mesa.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../LocalDB/carta.dart';
+import '../LocalDB/mano.dart';
+import '../LocalDB/maso.dart';
+import '../LocalDB/mesa.dart';
+import 'tablero.dart';
 
 class RelojInicio extends StatefulWidget {
   @override
@@ -13,13 +14,13 @@ class RelojInicio extends StatefulWidget {
 }
 
 class _RelojInicioState extends State<RelojInicio> {
-  double maxMano;
-  double cantMasos;
+  int maxMano;
+  int cantMasos;
   @override
   initState() {
     super.initState();
-    maxMano = 1.0;
-    cantMasos = 1.0;
+    cantMasos = 1;
+    maxMano = 3;
   }
 
   Widget build(BuildContext context) {
@@ -29,45 +30,92 @@ class _RelojInicioState extends State<RelojInicio> {
         title: Text("Inicio Reloj"),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          TextField(
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-                border: InputBorder.none, hintText: "Cantidad de Masos"),
-            onChanged: (String c) {
-              if (c != "") {
-                setState(() {
-                  cantMasos = double.parse(c);
-                });
-              }
-            },
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
-          TextField(
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "Cantidad de Cartas en Mano"),
-            onChanged: (String c) {
-              if (c != "") {
-                setState(() {
-                  maxMano = double.parse(c);
-                });
-              }
-            },
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 20.0,
+              ),
+              Text(
+                "Cantidad de Masos:",
+                style: TextStyle(color: Colors.white),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 40.0,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 5,
+                    itemBuilder: (BuildContext context, int index) {
+                      index = index + 1;
+                      return Container(
+                        width: 50,
+                        height: 50,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              cantMasos = index;
+                            });
+                          },
+                          child: Card(
+                            color: Colors.transparent,
+                            elevation: 10.0,
+                            child: Text(
+                              "${index == cantMasos ? "Seleccionado." : ""} $index",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+              Text(
+                "Cartas en Mano:",
+                style: TextStyle(color: Colors.white),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 40.0,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 10,
+                    itemBuilder: (BuildContext context, int index) {
+                      index = index + 1;
+                      return Container(
+                        width: 50,
+                        height: 50,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              maxMano = index;
+                            });
+                          },
+                          child: Card(
+                            color: Colors.black,
+                            elevation: 10.0,
+                            child: Text(
+                              "${index == maxMano ? "Seleccionado. " : ""} $index",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            ],
           ),
           MaterialButton(
-            child: Text("Comenzar Reloj"),
+            child: Text(
+              "Comenzar Reloj",
+              style: TextStyle(color: Colors.blue),
+            ),
             onPressed: () {
               Navigator.push(
                   context,
                   CupertinoPageRoute(
-                      builder: (context) =>
-                          CreateMaso(cantMasos.toInt(), maxMano.toInt())));
+                      builder: (context) => CreateMaso(cantMasos, maxMano)));
             },
           ),
         ],
@@ -150,7 +198,21 @@ class _RelojState extends State<Reloj> {
               },
             ),
           ],
-        )
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.refresh,
+            color: CupertinoColors.white,
+            semanticLabel: "Reiniciar Tablero Actual",
+          ),
+          onPressed: () {
+            MesaTotal mesa = Provider.of<MesaTotal>(context, listen: false);
+            VisibleMesa visible =
+                Provider.of<VisibleMesa>(context, listen: false);
+            mesa.addElementsOf(visible.getMesa());
+            visible.deleteElements();
+          },
+        ),
       ]),
       body: Consumer<Maso>(builder: (context, maso, _) {
         return Consumer<Mano>(builder: (context, mano, _) {

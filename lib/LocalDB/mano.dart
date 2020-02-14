@@ -23,7 +23,7 @@ class Mano with ChangeNotifier {
     if(listen) notifyListeners();
   }
   
-  Carta tirarCarta(Carta carta, bool bluetoothConnected,VisibleMesa mesa) {
+  void tirarCarta(Carta carta, bool bluetoothConnected,VisibleMesa mesa) {
     // Saca la Carta de la mano
     mano.remove(carta);
     // Tira la Carta a la Mesa Visible
